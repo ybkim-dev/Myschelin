@@ -24,6 +24,13 @@ public enum Category {
         return englishName;
     }
 
+    public static Category findByKoreanName(String koreanName) {
+        return Arrays.stream(Category.values())
+                .filter(category -> category.koreanName.equals(koreanName))
+                .findFirst()
+                .orElseThrow(() -> new EnumNotFoundException(MessageFormat.format("해당 카테고리가 없습니다. {0}", koreanName)));
+    }
+
     public static Category findByEnglishName(String englishName) {
         return Arrays.stream(Category.values())
                 .filter(category -> category.englishName.equals(englishName))
