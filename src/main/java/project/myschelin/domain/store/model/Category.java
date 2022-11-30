@@ -1,10 +1,33 @@
 package project.myschelin.domain.store.model;
 
-public enum Category {
-    MEAT("고깃집"), CAFE("카페"), KOREAN("한식");
-    private String name;
+import project.myschelin.exception.domain.EnumNotFoundException;
 
-    Category(String name) {
-        this.name = name;
+import java.text.MessageFormat;
+import java.util.Arrays;
+
+public enum Category {
+    MEAT("meat", "고깃집"), CAFE("cafe", "카페"), KOREAN("korean", "한식");
+    private String englishName;
+    private String koreanName;
+
+
+    Category(String englishName, String koreanName) {
+        this.englishName = englishName;
+        this.koreanName = koreanName;
+    }
+
+    public String getKoreanName() {
+        return koreanName;
+    }
+
+    public String getEnglishName() {
+        return englishName;
+    }
+
+    public static Category findByEnglishName(String englishName) {
+        return Arrays.stream(Category.values())
+                .filter(category -> category.englishName.equals(englishName))
+                .findFirst()
+                .orElseThrow(() -> new EnumNotFoundException(MessageFormat.format("해당 카테고리가 없습니다. {0}", englishName)));
     }
 }
