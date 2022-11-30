@@ -3,19 +3,22 @@ package project.myschelin.domain.store.repository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import project.myschelin.domain.store.dto.StoreInsertDto;
-import project.myschelin.domain.store.dto.StoreUpdateDto;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import project.myschelin.domain.store.model.Category;
 import project.myschelin.domain.store.model.Store;
 import project.myschelin.exception.database.EntityNotDeleteException;
+import project.myschelin.exception.database.EntityNotFoundException;
 import project.myschelin.exception.database.EntityNotInsertException;
 import project.myschelin.exception.database.EntityNotUpdateException;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 @Repository
 public class BasicStoreRepository implements StoreRepository {
@@ -55,36 +58,39 @@ public class BasicStoreRepository implements StoreRepository {
     }
 
     @Override
-    public Optional<Store> findStoreById(long storeId) {
+    public Store findStoreById(long storeId) {
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject("select * from stores where store_id = ?", storeRowMapper, storeId));
+            return jdbcTemplate.queryForObject("select * from stores where store_id = ?", storeRowMapper, storeId);
         } catch (EmptyResultDataAccessException e) {
             // TODO logging이 들어갈 지 말지 고민중
-            return Optional.empty();
+            throw new EntityNotFoundException(MessageFormat.format("해당 Id를 가진 엔티티가 없습니다. Entity id = {0}", storeId));
         }
     }
 
     @Override
-    public void insertStore(StoreInsertDto storeInsertDto) {
-        int update = jdbcTemplate.update("insert into stores(name, description, category, image_path) values(?,?,?,?)",
-                storeInsertDto.name(),
-                storeInsertDto.description(),
-                storeInsertDto.category().getEnglishName(),
-                storeInsertDto.image_path());
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public long insertStore(Store store) {
+        int update = jdbcTemplate.update("insert into stores(`name`, description, category, image_path) values(?,?,?,?)",
+                store.getName(),
+                store.getDescription(),
+                store.getCategory().getEnglishName(),
+                store.getImagePath());
         if (update != 1)
-            throw new EntityNotInsertException(MessageFormat.format("엔티티가 추가되지 않았습니다. Entity = {0}", storeInsertDto));
+            throw new EntityNotInsertException(MessageFormat.format("엔티티가 추가되지 않았습니다. Entity = {0}", store));
+
+        return jdbcTemplate.queryForObject("select last_insert_id()", Long.class);
     }
 
     @Override
-    public void updateStore(StoreUpdateDto storeUpdateDto) {
+    public void updateStore(Store store) {
         int update = jdbcTemplate.update("update stores set name = ?, description = ?, category = ? where store_id = ?",
-                storeUpdateDto.name(),
-                storeUpdateDto.description(),
-                storeUpdateDto.category().getEnglishName(),
-                storeUpdateDto.id()
+                store.getName(),
+                store.getDescription(),
+                store.getCategory().getEnglishName(),
+                store.getId()
         );
         if (update != 1)
-            throw new EntityNotUpdateException(MessageFormat.format("엔티티가 수정되지 않았습니다. Entity = {0}", storeUpdateDto));
+            throw new EntityNotUpdateException(MessageFormat.format("엔티티가 수정되지 않았습니다. Entity = {0}", store));
     }
 
     @Override
