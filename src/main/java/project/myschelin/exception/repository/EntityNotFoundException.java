@@ -1,6 +1,6 @@
 package project.myschelin.exception.database;
 
-public class EntityNotFoundException extends DatabaseException {
+public class EntityNotFoundException extends RepositoryException {
     public EntityNotFoundException() {
     }
 

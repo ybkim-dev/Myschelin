@@ -1,6 +1,6 @@
 package project.myschelin.exception.database;
 
-public class EntityNotDeleteException extends DatabaseException {
+public class EntityNotDeleteException extends RepositoryException {
     public EntityNotDeleteException() {
     }
 

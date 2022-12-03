@@ -1,6 +1,6 @@
 package project.myschelin.exception.database;
 
-public class EntityNotInsertException extends DatabaseException {
+public class EntityNotInsertException extends RepositoryException {
     public EntityNotInsertException() {
     }
 

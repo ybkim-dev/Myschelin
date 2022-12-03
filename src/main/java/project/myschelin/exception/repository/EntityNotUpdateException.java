@@ -1,6 +1,6 @@
 package project.myschelin.exception.database;
 
-public class EntityNotUpdateException extends DatabaseException {
+public class EntityNotUpdateException extends RepositoryException {
     public EntityNotUpdateException() {
     }
 
