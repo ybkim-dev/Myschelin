@@ -17,8 +17,7 @@ public class StoreController {
 
     @GetMapping("/admin/api/v1/stores")
     public ResponseEntity<StoresAdminResponseDto> findAllStores(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
-        StoresAdminResponseDto storesAdminResponseDto;
-        storesAdminResponseDto = new StoresAdminResponseDto(storeService.findAllStores(pageNum));
+        StoresAdminResponseDto storesAdminResponseDto = StoresAdminResponseDto.from(storeService.findAllStores(pageNum));
         return ResponseEntity.ok(storesAdminResponseDto);
     }
 
