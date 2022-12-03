@@ -3,22 +3,19 @@ package project.myschelin.domain.store.repository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import project.myschelin.domain.store.model.Category;
 import project.myschelin.domain.store.model.Store;
-import project.myschelin.exception.database.EntityNotDeleteException;
-import project.myschelin.exception.database.EntityNotFoundException;
-import project.myschelin.exception.database.EntityNotInsertException;
-import project.myschelin.exception.database.EntityNotUpdateException;
+import project.myschelin.exception.repository.EntityNotDeleteException;
+import project.myschelin.exception.repository.EntityNotFoundException;
+import project.myschelin.exception.repository.EntityNotInsertException;
+import project.myschelin.exception.repository.EntityNotUpdateException;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Repository
 public class BasicStoreRepository implements StoreRepository {
@@ -33,10 +30,10 @@ public class BasicStoreRepository implements StoreRepository {
         long storeId = resultSet.getLong("store_id");
         String name = resultSet.getString("name");
         String description = resultSet.getString("description");
-        Category category = Category.valueOf(resultSet.getString("category"));
+        Category category = Category.findByEnglishName(resultSet.getString("category"));
         String imagePath = resultSet.getString("image_path");
         LocalDateTime createdAt = resultSet.getTimestamp("created_at").toLocalDateTime();
-        return new Store(storeId, name, name, category, imagePath, createdAt);
+        return new Store(storeId, name, description, category, imagePath, createdAt);
     };
 
     @Override
