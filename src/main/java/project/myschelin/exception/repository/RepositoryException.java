@@ -1,4 +1,4 @@
-package project.myschelin.exception.database;
+package project.myschelin.exception.repository;
 
 public class RepositoryException extends RuntimeException {
     public RepositoryException() {
