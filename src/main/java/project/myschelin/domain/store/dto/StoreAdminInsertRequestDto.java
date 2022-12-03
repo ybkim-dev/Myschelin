@@ -5,14 +5,14 @@ import project.myschelin.domain.store.model.Category;
 import project.myschelin.domain.store.model.Store;
 
 
-public final class StoreInsertRequestDto {
+public final class StoreAdminInsertRequestDto {
     private final String name;
     private final String description;
     private final String category;
     private final MultipartFile imageFile;
     private String imagePath;
 
-    public StoreInsertRequestDto(String name, String description, String category, MultipartFile imageFile) {
+    public StoreAdminInsertRequestDto(String name, String description, String category, MultipartFile imageFile) {
         this.name = name;
         this.description = description;
         this.category = category;

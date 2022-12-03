@@ -22,8 +22,8 @@ public class StoreController {
     }
 
     @PostMapping("/admin/api/v1/stores")
-    public ResponseEntity<Void> enrollStore(@ModelAttribute StoreInsertRequestDto storeInsertRequestDto) {
-        long storeId = storeService.saveStore(storeInsertRequestDto);
+    public ResponseEntity<Void> enrollStore(@ModelAttribute StoreAdminInsertRequestDto storeAdminInsertRequestDto) {
+        long storeId = storeService.saveStore(storeAdminInsertRequestDto);
         return ResponseEntity.created(URI.create("/admin/api/v1/stores/" + storeId)).build();
     }
 

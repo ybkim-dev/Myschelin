@@ -31,10 +31,10 @@ public class StoreService {
         return StoreAdminDetailResponseDto.from(store);
     }
 
-    public synchronized long saveStore(StoreInsertRequestDto storeInsertRequestDto) {
-        String imagePath = fileLocalRepository.save(storeInsertRequestDto.getImageFile());
-        storeInsertRequestDto.setImagePath(imagePath);
-        Store store = storeInsertRequestDto.toStore();
+    public synchronized long saveStore(StoreAdminInsertRequestDto storeAdminInsertRequestDto) {
+        String imagePath = fileLocalRepository.save(storeAdminInsertRequestDto.getImageFile());
+        storeAdminInsertRequestDto.setImagePath(imagePath);
+        Store store = storeAdminInsertRequestDto.toStore();
         return storeRepository.insertStore(store);
     }
 
