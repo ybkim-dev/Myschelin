@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible"/>
+    <meta name="author" content=""/>
+    <title>가게 정보 수정</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet"/>
+    <link href="/css/styles.css" rel="stylesheet"/>
+    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body class="container-fluid">
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <a class="navbar-brand ps-3">Myschelin Administrator</a>
+</nav>
+<div id="layoutSidenav_content">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                <div class="card-header"><h3 class="text-center font-weight-light my-4">가게 정보 수정</h3></div>
+                <div class="card-body">
+                    <form id="form-submit">
+                        <div class="form-floating mb-3" id="typeBox">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="category" id="meat-radio" value="고깃집"
+                                       checked>
+                                <label class="form-check-label" for="meat-radio">
+                                    고깃집
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="category" id="korean-radio" value="한식">
+                                <label class="form-check-label" for="korean-radio">
+                                    한식
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="category" id="cafe-radio" value="카페">
+                                <label class="form-check-label" for="cafe-radio">
+                                    카페
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="name" type="text" name="name"/>
+                            <label for="name">가게 이름</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="description" type="text" name="description"/>
+                            <label for="description">가게 설명</label>
+                        </div>
+                        <div class="mt-4 mb-0">
+                            <div class="d-block">
+                                <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    function createStore(event) {
+        const storeId = /*[[${storeId}]]*/;
+        event.preventDefault();
+        let form = new FormData();
+        let category = document.querySelector('input[name="category"]:checked').value;
+        let name = document.getElementById("name").value;
+        let description = document.getElementById("description").value;
+        form.append("category", category);
+        form.append("name", name);
+        form.append("description", description);
+        axios({
+            method: "put",
+            url: "/admin/api/v1/stores/" + storeId,
+            data: JSON.stringify(Object.fromEntries(form)),
+            headers: {
+                'Content-Type': `application/json`
+            },
+        })
+            .then((response) => {
+                console.log(response);
+                window.location = "/admin/stores";
+            })
+            .catch((error) => {
+                console.log("error : " + error);
+                window.location = "/admin/stores";
+            })
+    }
+
+    function getStoreDetail() {
+        const storeId = /*[[${storeId}]]*/;
+        axios.get("http://localhost:8080/admin/api/v1/stores/" + storeId)
+            .then(response => {
+                if(response.status == 200) {
+                    let store = response.data;
+                    document.getElementById("name").value = `${store.name}`;
+                    document.getElementById("description").value = `${store.description}`;
+                }
+            })
+    }
+
+
+    let submit = document.getElementById("form-submit");
+    submit.addEventListener("submit", createStore);
+
+    window.addEventListener('load', () => {
+        getStoreDetail();
+    })
+    /*]]>*/
+</script>
+</body>
+</html>

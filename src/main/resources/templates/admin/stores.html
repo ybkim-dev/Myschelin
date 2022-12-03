@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible"/>
+    <meta name="author" content=""/>
+    <title>Myschelin 관리자 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet"/>
+    <link href="/css/styles.css" rel="stylesheet"/>
+    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/6a5f5c3c1d.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body class="container-fluid">
+
+<div id="layoutSidenav_content">
+    <main>
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <a class="navbar-brand ps-3">Myschelin Administrator</a>
+        </nav>
+        <div class="container-fluid px-4">
+            <h1 class=""></h1>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end accordion-flush" style="padding-bottom: 10px">
+                <a href="/admin/stores/new" class="btn btn-primary me-md-2" type="button">가게 추가</a>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    가게 목록
+                </div>
+                <div>
+                    <table class="table table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th class="col-1 text-md-center">Id</th>
+                            <th class="col-4 text-md-center">가게명</th>
+                            <th class="col-2 text-md-center">카테고리</th>
+                            <th class="col-1 text-md-center">수정</th>
+                            <th class="col-1 text-md-center">삭제</th>
+                        </tr>
+                        </thead>
+                        <tbody id = "store-table">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</div>
+<script>
+    function getStores(pageNum) {
+        axios.get('http://localhost:8080/admin/api/v1/stores?pageNum=' + pageNum)
+            .then(response => {
+                if (response.status == 200) {
+                    let stores = response.data["stores"];
+                    const tbody = document.querySelector("tbody");
+                    tbody.innerHTML = "";
+                    for (var i = 0; i < stores.length; i++) {
+                        let row = tbody.insertRow();
+                        row.className = "text-center";
+                        let idCell = row.insertCell(0);
+                        idCell.className = "text-center";
+                        idCell.innerText = `${stores[i].id}`;
+                        let nameCell = row.insertCell(1);
+                        nameCell.className = "text-center";
+                        nameCell.innerHTML = '<a href="' + 'http://localhost:8080/admin/stores/' + `${stores[i].id}` + '">' + `${stores[i].name}` + '</a>';
+                        let categoryCell = row.insertCell(2);
+                        categoryCell.className = "text-center";
+                        categoryCell.innerText = `${stores[i].category}`;
+                        let modifyCell = row.insertCell(3);
+                        modifyCell.className = "text-center";
+                        modifyCell.innerHTML = '<a href="' + 'http://localhost:8080/admin/stores/edit/' + `${stores[i].id}` + '"><i class=\"fa-regular fa-pen-to-square\" ></i></a>';
+                        let deleteCell = row.insertCell(4);
+                        deleteCell.className = "text-center";
+                        deleteCell.innerHTML = '<div onclick="deleteStore(' + `${stores[i].id}` + ')"><i class=\"fa-solid fa-trash\"></i></div>';
+                    }
+                }
+            });
+    }
+
+    function deleteStore(storeId) {
+        axios.delete('http://localhost:8080/admin/api/v1/stores/' + storeId)
+            .then(() => {
+                window.location = "/admin/stores";
+            });
+    }
+
+    window.addEventListener('load', () => {
+        getStores(0)
+    })
+
+
+
+</script>
+</body>
+</html>
