@@ -1,5 +1,6 @@
 package project.myschelin.domain.store.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import project.myschelin.domain.store.dto.*;
@@ -44,4 +45,21 @@ public class StoreController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/api/v1/users/{userId}/stores")
+    public ResponseEntity<StoresDashboardResponseDto> findStoresByUserId(@PathVariable("userId") long userId, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+        StoresDashboardResponseDto allStoresByUserId = StoresDashboardResponseDto.from(storeService.findAllStoresByUserId(userId, pageNum));
+        return ResponseEntity.ok(allStoresByUserId);
+    }
+
+    @PostMapping("/api/v1/users/{userId}/stores/{storeId}")
+    public ResponseEntity<Void> createLike(@PathVariable("userId") long userId, @PathVariable("storeId") long storeId) {
+        storeService.createLike(userId, storeId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/api/v1/stores")
+    public ResponseEntity<Object> findAllStoresByParameter(@RequestParam(value = "storeName", required = false) String storeName,  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+        StoresDashboardResponseDto stores = StoresDashboardResponseDto.from(storeService.findAllStoresByName(storeName, pageNum));
+        return new ResponseEntity<>(stores, HttpStatus.OK);
+    }
 }

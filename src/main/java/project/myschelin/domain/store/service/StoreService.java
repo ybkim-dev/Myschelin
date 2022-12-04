@@ -22,13 +22,23 @@ public class StoreService {
         return stores.stream().map(StoreAdminResponseDto::from).toList();
     }
 
-    public List<Store> findAllStoresByUserId(long userId, int pageNum) {
-        return storeRepository.findStoresByUserId(userId, pageNum);
+    public List<StoreDashboardResponseDto> findAllStoresByName(String name, int pageNum) {
+        List<Store> stores = storeRepository.findStoresByName(name, pageNum);
+        return stores.stream().map(StoreDashboardResponseDto::from).toList();
+    }
+
+    public List<StoreDashboardResponseDto> findAllStoresByUserId(long userId, int pageNum) {
+        List<Store> stores = storeRepository.findStoresByUserId(userId, pageNum);
+        return stores.stream().map(StoreDashboardResponseDto::from).toList();
     }
 
     public StoreAdminDetailResponseDto findStoreById(long storeId) {
         Store store = storeRepository.findStoreById(storeId);
         return StoreAdminDetailResponseDto.from(store);
+    }
+
+    public void createLike(long userId, long storeId) {
+        storeRepository.insertLike(userId, storeId);
     }
 
     public synchronized long saveStore(StoreAdminInsertRequestDto storeAdminInsertRequestDto) {

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible"/>
+    <meta name="author" content=""/>
+    <title>회원 가입</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet"/>
+    <link href="/css/styles.css" rel="stylesheet"/>
+    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body class="container-fluid">
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <a class="navbar-brand ps-3">Myschelin</a>
+</nav>
+<div id="layoutSidenav_content">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                <div class="card-header"><h3 class="text-center font-weight-light my-4">회원 가입</h3></div>
+                <div class="card-body">
+                    <form id="form-submit">
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="nickname" type="text" name="nickname"/>
+                            <label for="nickname">닉네임</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="email" type="email" name="email"/>
+                            <label for="email">이메일</label>
+                        </div>
+                        <div class="mt-4 mb-0">
+                            <div class="d-block">
+                                <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let submit = document.getElementById("form-submit");
+
+    function createUser(event) {
+        event.preventDefault();
+        let form = event.currentTarget;
+
+        let formFields = new FormData(form);
+        axios({
+            method: "post",
+            url: "/api/v1/users",
+            data: JSON.stringify(Object.fromEntries(formFields.entries())),
+            headers: {
+                'Content-Type': `application/json`
+            },
+        })
+            .then((response) => {
+                console.log(response);
+                window.location = "/admin/stores";
+            })
+            .catch((error) => {
+                console.log("error : " + error);
+                window.location = "/admin/stores";
+            })
+    }
+
+    submit.addEventListener("submit", createUser);
+</script>
+</body>
+</html>

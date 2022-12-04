@@ -55,6 +55,13 @@ public class BasicStoreRepository implements StoreRepository {
     }
 
     @Override
+    public List<Store> findStoresByName(String name, int pageNum) {
+        String wrappedName = "%" + name + "%";
+        List<Store> stores = jdbcTemplate.query("select * from stores where name like ?", storeRowMapper, wrappedName);
+        return stores;
+    }
+
+    @Override
     public Store findStoreById(long storeId) {
         try {
             return jdbcTemplate.queryForObject("select * from stores where store_id = ?", storeRowMapper, storeId);
@@ -62,6 +69,15 @@ public class BasicStoreRepository implements StoreRepository {
             // TODO logging이 들어갈 지 말지 고민중
             throw new EntityNotFoundException(MessageFormat.format("해당 Id를 가진 엔티티가 없습니다. Entity id = {0}", storeId));
         }
+    }
+
+    @Override
+    public void insertLike(long userId, long storeId) {
+        int update = jdbcTemplate.update("insert into wishes(user_id, store_id) values(?,?)", userId, storeId);
+        if(update != 1)
+            throw new EntityNotInsertException(MessageFormat.format("엔티티가 추가되지 않았습니다. Entity = userId = {0}, storeId = {1}",
+                    userId,
+                    storeId));
     }
 
     @Override
